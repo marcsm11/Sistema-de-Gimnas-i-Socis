@@ -13,18 +13,12 @@ private:
 
 public:
     // Constructors
-    Tarifa() : preuMensual(0.0), nomTarifa("Bàsica") {}
-
-    Tarifa(string nom, double preu) : nomTarifa(nom), preuMensual(preu > 0 ? preu : 0.0) {}
+    Tarifa();
+    Tarifa(string nom, double preu);
 
     // Getters
-    double getPreuMensual() const {
-        return preuMensual;
-    }
-
-    string getNomTarifa() const {
-        return nomTarifa;
-    }
+    double getPreuMensual() const;
+    string getNomTarifa() const;
 };
 
 // ==========================================
@@ -32,28 +26,22 @@ public:
 // ==========================================
 class Soci {
 protected:
-    // Fem els atributs 'protected' perquè la classe filla (SociVIP) hi pugui accedir
+    // Atributs protegits per permetre l'accés a la classe derivada
     string nom;
-    int idSoci;
-    Tarifa tarifa; // COMPOSICIÓ: El soci TÉ UNA Tarifa a dins
+    unsigned int idSoci; // Tipus sense signe (>= 0)
+    Tarifa tarifa;       // COMPOSICIÓ: El soci TÉ UNA Tarifa a dins
 
 public:
-    // Constructor de Soci
-    Soci(string n, int id, Tarifa t)
-        : nom(n), idSoci(id), tarifa(t) {
-    }
+    // Constructor i Destructor
+    Soci(string n, unsigned int id, Tarifa t);
+    virtual ~Soci();
 
     // Getters
-    string getNom() const { return nom; }
-    int getIdSoci() const { return idSoci; }
+    string getNom() const;
+    unsigned int getIdSoci() const;
 
-    // Mètode virtual per permetre el polimorfisme / redefinició en classes filles
-    virtual double calcularQuota() const {
-        return tarifa.getPreuMensual();
-    }
-
-    // Destructor virtual per bona praxi en herència
-    virtual ~Soci() {}
+    // Mètode virtual per permetre polimorfisme
+    virtual double calcularQuota() const;
 };
 
 // ==========================================
@@ -61,42 +49,12 @@ public:
 // ==========================================
 class SociVIP : public Soci { // SociVIP ÉS UN Soci
 private:
-    double descompteEntrenador; // p. ex. 15.0 per un 15% de descompte o un descompte en euros
+    double descompteEntrenador;
 
 public:
-    // Constructor: Crida al constructor de la classe base (Soci)
-    SociVIP(string n, int id, Tarifa t, double descompte)
-        : Soci(n, id, t), descompteEntrenador(descompte) {
-    }
+    // Constructor
+    SociVIP(string n, unsigned int id, Tarifa t, double descompte);
 
-    // Redefinició (override) del mètode calcularQuota()
-    double calcularQuota() const override {
-        double quotaBase = tarifa.getPreuMensual();
-        double quotaFinal = quotaBase - descompteEntrenador;
-        return quotaFinal > 0 ? quotaFinal : 0.0; // Evitem quotes negatives
-    }
+    // Redefinició (override) del mètode
+    double calcularQuota() const override;
 };
-
-// ==========================================
-// PROVA DEL PROGRAMA (main)
-// ==========================================
-int main() {
-    // 1. Creem un parell de tarifes
-    Tarifa tarifaEstandard("Estàndard", 45.0);
-    Tarifa tarifaPremium("Premium", 60.0);
-
-    // 2. Creem un Soci normal (Composició amb tarifaEstandard)
-    Soci sociNormal("Marc", 101, tarifaEstandard);
-
-    // 3. Creem un Soci VIP (Herència de Soci + Descompte de 10€)
-    SociVIP sociVIP("Anna", 102, tarifaPremium, 10.0);
-
-    // 4. Mostrem els resultats
-    cout << "Soci Normal: " << sociNormal.getNom()
-        << " | Quota: " << sociNormal.calcularQuota() << " EUR\n";
-
-    cout << "Soci VIP: " << sociVIP.getNom()
-        << " | Quota amb descompte: " << sociVIP.calcularQuota() << " EUR\n";
-
-    return 0;
-}
