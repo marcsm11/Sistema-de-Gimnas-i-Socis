@@ -26,10 +26,9 @@ public:
 // ==========================================
 class Soci {
 protected:
-    // Atributs protegits per permetre l'accés a la classe derivada
     string nom;
-    unsigned int idSoci; // Tipus sense signe (>= 0)
-    Tarifa tarifa;       // COMPOSICIÓ: El soci TÉ UNA Tarifa a dins
+    unsigned int idSoci;
+    Tarifa tarifa; // COMPOSICIÓ: El soci TÉ UNA Tarifa a dins
 
 public:
     // Constructor i Destructor
